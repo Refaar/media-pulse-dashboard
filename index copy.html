@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pulse Dashboard - AI Media Intelligence</title>
+    
+    <!-- -->
+    <!-- Tailwind CSS untuk Styling Premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js untuk Visualisasi Grafik Batang Interaktif -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons untuk Ikon Modern ala Dashboard SaaS -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        // Mengonfigurasi kustomisasi tema Tailwind untuk visualisasi gelap (dark theme) yang premium
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            950: '#090d16',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Mengatur custom scrollbar yang elegan */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden bg-brand-950 text-slate-100">
+
+    <!-- -->
+    <!-- HEADER UTAMA -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0 z-10">
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                    Media Pulse <span class="bg-indigo-500/10 text-indigo-400 text-xs px-2.5 py-0.5 rounded-full border border-indigo-500/20 font-semibold">AI Edition</span>
+                </h1>
+                <p class="text-xs text-slate-400">Platform Analisis Persepsi Publik & Intelijen Media Real-Time</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4 w-full sm:w-auto justify-end">
+            <div class="flex items-center space-x-2 text-xs text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span>Sistem Siap Analisis</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- -->
+    <!-- AREA KONTEN UTAMA (SPLIT SCREEN) -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- PANEL KIRI: INPUT CONTROL PANEL -->
+        <section class="w-full lg:w-[420px] bg-slate-900 border-r border-slate-800 flex flex-col overflow-y-auto p-6 flex-shrink-0 gap-5">
+            <div>
+                <h2 class="text-md font-semibold text-white flex items-center gap-2 mb-1">
+                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> Konfigurasi Intelijen
+                </h2>
+                <p class="text-xs text-slate-400">Masukkan parameter analisis dan data media di bawah ini.</p>
+            </div>
+
+            <!-- Formulir Input -->
+            <div class="space-y-4">
+                <!-- Topik / Brand -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1.5">Topik atau Nama Brand</label>
+                    <input type="text" id="inputBrand" placeholder="Contoh: Indomie, Gojek, Tokopedia" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <!-- Sumber Data -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1.5">Sumber Data Media</label>
+                    <select id="inputSource" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="Multi-Channel">Kombinasi Multi-Channel (All)</option>
+                        <option value="TikTok">Media Sosial: TikTok</option>
+                        <option value="Twitter/X">Media Sosial: Twitter / X</option>
+                        <option value="News Portal">Portal Berita & Media Massa</option>
+                        <option value="Instagram">Media Sosial: Instagram</option>
+                    </select>
+                </div>
+
+                <!-- OpenRouter API Key & Model Selection -->
+                <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-amber-400 mb-1 flex items-center gap-1">
+                            <i data-lucide="key-round" class="w-3 h-3"></i> OpenRouter API Key
+                        </label>
+                        <input type="password" id="inputApiKey" placeholder="sk-or-v1-..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Model AI Generatif</label>
+                        <input type="text" id="inputModel" value="google/gemma-2-9b-it:free" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <p class="text-[10px] text-slate-500 mt-1">Gunakan model gratis bawaan untuk menghemat kuota.</p>
+                    </div>
+                </div>
+
+                <!-- Input Data Media (Paste / Upload) -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-medium text-slate-300">Data Media Mentah</label>
+                        <button onclick="document.getElementById('fileUpload').click()" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+                            <i data-lucide="upload" class="w-3 h-3"></i> Unggah CSV/TXT
+                        </button>
+                        <input type="file" id="fileUpload" accept=".csv,.txt,.json" class="hidden" onchange="handleFileUpload(event)">
+                    </div>
+                    <textarea id="inputRawData" rows="6" placeholder="Tempelkan transkrip video, komentar netizen, atau isi berita media massa di sini untuk dianalisis oleh AI..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- -->
+            <!-- Tombol Aksi Utama -->
+            <div class="grid grid-cols-2 gap-3 mt-auto pt-4 border-t border-slate-800">
+                <button onclick="loadSampleData()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold py-2.5 px-4 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5">
+                    <i data-lucide="database" class="w-3.5 h-3.5"></i> Load Sample Data
+                </button>
+                <button onclick="startAnalysis()" id="btnAnalyze" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-1.5">
+                    <i data-lucide="play" class="w-3.5 h-3.5"></i> Analyze Data
+                </button>
+            </div>
+        </section>
+
+        <!-- PANEL KANAN: PRESTIGE DASHBOARD VISUALS -->
+        <section class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 relative">
+            
+            <!-- OVERLAY UNTUK FEEDBACK USER SAAT LOADING -->
+            <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex-col items-center justify-center gap-3">
+                <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <div class="text-center">
+                    <p class="text-md font-bold text-white">Sedang Memproses AI Intelligence...</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Analisis sentimen, kalkulasi risiko, dan pengelompokan tren topik sedang dikerjakan.</p>
+                </div>
+            </div>
+
+            <!-- NOTIFIKASI PEMBERITAHUAN DALAM APLIKASI -->
+            <div id="notifBox" class="hidden flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-xs transition-all animate-pulse">
+                <span id="notifText">Laporan berhasil disalin ke clipboard!</span>
+                <button onclick="toggleNotif(false)" class="text-emerald-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+
+            <!-- INTRODUCTORY EMPTY STATE -->
+            <div id="emptyState" class="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                <div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-800">
+                    <i data-lucide="line-chart" class="w-8 h-8 text-indigo-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Dashboard Belum Terisi Data</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1">Silakan masukkan data media Anda secara manual di panel kiri atau klik "Load Sample Data" untuk simulasi kilat hasil analisis.</p>
+                </div>
+            </div>
+
+            <!-- -->
+            <!-- WRAPPER UTAMA DASHBOARD HASIL (HIDDEN SECARA DEFAULT) -->
+            <div id="dashboardResults" class="hidden space-y-6">
+                
+                <!-- HEADER UTAMA DASHBOARD -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-800">
+                    <div>
+                        <h2 id="displayTitle" class="text-2xl font-extrabold text-white tracking-tight">Laporan Analisis Media</h2>
+                        <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-1">
+                            Sumber Data: <span id="displaySource" class="text-indigo-400 font-semibold">Multi-Channel</span> 
+                            • Tanggal Analisis: <span id="displayDate" class="text-slate-300">Hari ini</span>
+                        </p>
+                    </div>
+                    <button onclick="copyToClipboard()" class="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Report
+                    </button>
+                </div>
+
+                <!-- GRID 1: KPIS (SENTIMEN, RISK LEVEL, DAN EXECUTIVE SUMMARY) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <!-- CARD 1: SENTIMENT ANALYSIS (KPI) -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sentiment Score</span>
+                            <i data-lucide="smile" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <span id="sentimentValue" class="text-4xl font-extrabold text-emerald-400">85%</span>
+                            <span id="sentimentLabel" class="text-xs text-emerald-500/80 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md">Positif</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden mt-4">
+                            <div id="sentimentBar" class="bg-emerald-500 h-full rounded-full transition-all duration-1000" style="width: 85%"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-3">Persentase total suara konsumen yang bersifat suportif & netral.</p>
+                    </div>
+
+                    <!-- CARD 2: RISK LEVEL BADGE -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Risk Level Assessment</span>
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-emerald-400" id="riskIcon"></i>
+                        </div>
+                        <div>
+                            <span id="riskBadge" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> LOW RISK
+                            </span>
+                        </div>
+                        <p id="riskDesc" class="text-xs text-slate-400 mt-4 leading-relaxed">Situasi aman. Tidak terdeteksi pola krisis digital yang berpotensi mencederai nama baik brand FMCG klien.</p>
+                    </div>
+
+                    <!-- CARD 3: KEY INSIGHT RINGKAS -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Key Takeaway</span>
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <p id="keyInsightText" class="text-xs text-slate-300 leading-relaxed">Mayoritas publik sangat mengapresiasi inovasi produk baru kita. Strategi terbaik ke depan adalah memperluas titik distribusi agar mudah dicari di pasar tradisional.</p>
+                        <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-indigo-400">
+                            <span>Status: Verified by AI</span>
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -->
+                <!-- GRID 2: THEME CHART & COMPARISON TABLE -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- GRAFIK BATANG FREKUENSI TEMA (CHART.JS) -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Theme Frequency Analysis</h3>
+                                <p class="text-xs text-slate-500">Distribusi klaster topik percakapan publik di media.</p>
+                            </div>
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-400"></i>
+                        </div>
+                        <div class="h-[220px] w-full relative flex items-center justify-center">
+                            <canvas id="themeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- TABEL COMPARISON: OPPORTUNITIES VS CONCERNS -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Sentiment Grid Evaluation</h3>
+                                    <p class="text-xs text-slate-500">Pemetaan antara isu kritis audiens vs peluang potensial brand.</p>
+                                </div>
+                                <i data-lucide="git-compare" class="w-4 h-4 text-indigo-400"></i>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 text-xs h-[180px] overflow-y-auto pr-1">
+                                <!-- Kolom Peluang -->
+                                <div class="bg-emerald-500/5 p-3 rounded-xl border border-emerald-500/10">
+                                    <span class="font-extrabold text-emerald-400 flex items-center gap-1 mb-2">
+                                        <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Opportunities
+                                    </span>
+                                    <ul id="listOpportunities" class="list-disc pl-4 space-y-1.5 text-slate-300">
+                                        <li>Memperluas jangkauan ke area luar kota besar.</li>
+                                        <li>Bikin bundling edisi Ramadhan.</li>
+                                    </ul>
+                                </div>
+                                <!-- Kolom Masalah -->
+                                <div class="bg-rose-500/5 p-3 rounded-xl border border-rose-500/10">
+                                    <span class="font-extrabold text-rose-400 flex items-center gap-1 mb-2">
+                                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Concerns
+                                    </span>
+                                    <ul id="listConcerns" class="list-disc pl-4 space-y-1.5 text-slate-300">
+                                        <li>Stok produk sering habis di minimarket.</li>
+                                        <li>Harga terasa naik di beberapa e-commerce.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -->
+                <!-- GRID 3: RECOMMENDED ACTIONS & EXECUTIVE SUMMARY -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- TABEL RECOMMENDED ACTIONS DENGAN PRIORITY BADGE -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 lg:col-span-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Recommended Actions</h3>
+                                <p class="text-xs text-slate-500">Langkah operasional yang wajib dieksekusi.</p>
+                            </div>
+                            <i data-lucide="check-square" class="w-4 h-4 text-indigo-400"></i>
+                        </div>
+                        <div class="space-y-3 max-h-[250px] overflow-y-auto pr-1" id="listActions">
+                            <!-- Template Row Action -->
+                            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-start justify-between gap-2">
+                                <div>
+                                    <p class="text-xs font-semibold text-slate-200">Restock Barang Ritel</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Segera isi kembali rak ritel di area Bandung.</p>
+                                </div>
+                                <span class="text-[9px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded">HIGH</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EXECUTIVE SUMMARY LAPORAN -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Executive AI Summary</h3>
+                                <p class="text-xs text-slate-500">Rangkuman strategis untuk konsumsi Dewan Direksi Klien.</p>
+                            </div>
+                            <i data-lucide="file-text" class="w-4 h-4 text-indigo-400"></i>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <p id="executiveSummaryText" class="text-xs text-slate-300 leading-relaxed whitespace-pre-line h-[160px] overflow-y-auto pr-1">
+                                Berdasarkan analisis data media yang terkumpul, sentimen pasar berada pada zona yang aman dan didominasi apresiasi positif...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- -->
+    <script>
+        // Variabel penampung objek Chart agar tidak tumpang tindih saat dibuat ulang
+        let themeChartInstance = null;
+        let finalAIReportText = ""; // Tempat menyimpan ringkasan mentah untuk dicopy
+
+        // Menginisialisasi ikon Lucide pada awal halaman dimuat
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+        // Toggle Notifikasi Kustom dalam aplikasi
+        function toggleNotif(show, text = "") {
+            const notif = document.getElementById('notifBox');
+            const notifText = document.getElementById('notifText');
+            if (show) {
+                notifText.innerText = text;
+                notif.classList.remove('hidden');
+                setTimeout(() => { notif.classList.add('hidden'); }, 4000);
+            } else {
+                notif.classList.add('hidden');
+            }
+        }
+
+        // Fungsi Membaca File yang Diunggah oleh Pengguna (CSV / TXT)
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('inputRawData').value = e.target.result;
+                toggleNotif(true, `File "${file.name}" berhasil diunggah!`);
+            };
+            reader.readAsText(file);
+        }
+
+        // Memuat Data Contoh Ritel FMCG Ramadhan (Sample Data)
+        function loadSampleData() {
+            document.getElementById('inputBrand').value = "Keripik Singkong Nusantara";
+            document.getElementById('inputSource').value = "Multi-Channel";
+            document.getElementById('inputRawData').value = `Komentar 1: Keripik rasa balado ini rasanya pas banget pas buka puasa! Tapi kok harganya di minimarket sebelah naik ya?
+Komentar 2: Desain bungkusnya edisi Ramadhan cakep bener, tapi stok di minimarket deket rumah gue selalu habis euy di Bandung.
+Komentar 3: Asli ini keripik tersedap, cuma tolong dong perbanyak lagi stoknya, susah dapetnya kalo sore.
+Berita: Keripik Singkong Nusantara menjadi jajanan favorit paling dicari selama mudik lebaran 2026. Permintaan diprediksi naik hingga 40%.`;
+            
+            toggleNotif(true, "Data simulasi FMCG berhasil dimasukkan!");
+        }
+
+        //        // Memulai Proses Analisis AI menggunakan API OpenRouter
+        async function startAnalysis() {
+            const brand = document.getElementById('inputBrand').value.trim();
+            const source = document.getElementById('inputSource').value;
+            const apiKey = document.getElementById('inputApiKey').value.trim();
+            const model = document.getElementById('inputModel').value.trim();
+            const rawData = document.getElementById('inputRawData').value.trim();
+
+            if (!brand || !rawData) {
+                alert("Harap isi nama brand dan data media mentah terlebih dahulu!");
+                return;
+            }
+
+            // Jika API Key tidak diisi, gunakan simulasi lokal agar website tetap menyajikan visual cantik tanpa error API
+            if (!apiKey) {
+                runSimulationLocal(brand, source);
+                return;
+            }
+
+            // Memunculkan loading overlay selama proses integrasi API berjalan
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
+            const systemPrompt = `Kamu adalah sistem AI Media Intelligence Analyst senior. Tugasmu adalah menganalisis data media mentah dan menghasilkan keluaran berupa struktur JSON yang valid, presisi, dan kokoh tanpa tambahan kalimat pengantar lainnya. JSON harus memiliki kunci berikut secara persis:
+{
+  "sentimentScore": 85,
+  "sentimentLabel": "Positif",
+  "riskLevel": "LOW",
+  "riskDescription": "Deskripsi singkat analisis risiko.",
+  "keyInsight": "Poin kunci temuan analisis.",
+  "themes": ["Rasa Enak", "Stok Langka", "Harga Naik"],
+  "themeFrequencies": [12, 8, 4],
+  "opportunities": ["Sebutkan peluang 1", "Sebutkan peluang 2"],
+  "concerns": ["Sebutkan masalah 1", "Sebutkan masalah 2"],
+  "recommendedActions": [
+    {"action": "Restock Barang", "desc": "Penjelasan detail tindakan.", "priority": "HIGH"},
+    {"action": "Promosikan Bundling", "desc": "Penjelasan detail.", "priority": "MEDIUM"}
+  ],
+  "executiveSummary": "Tuliskan laporan eksekutif formal sepanjang 2 paragraf untuk Direksi Klien."
+}`;
+
+            const userPrompt = `Lakukan analisis mendalam terhadap Brand: ${brand} menggunakan data media bersumber dari ${source} berikut ini:\n\n${rawData}`;
+
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userPrompt }
+                        ],
+                        response_format: { type: "json_object" }
+                    })
+                });
+
+                const resData = await response.json();
+                
+                if (resData.choices && resData.choices[0].message) {
+                    const cleanJson = JSON.parse(resData.choices[0].message.content);
+                    renderDashboard(cleanJson, brand, source);
+                } else {
+                    throw new Error("Format respons API tidak valid.");
+                }
+
+            } catch (error) {
+                console.error("Gagal memanggil API OpenRouter:", error);
+                alert("Gagal terhubung dengan AI OpenRouter. Kami akan memuat simulasi data lokal yang interaktif untuk visualisasi Anda.");
+                runSimulationLocal(brand, source);
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+        }
+
+        //        // Merender seluruh data ke elemen visual antarmuka (dashboard)
+        function renderDashboard(data, brand, source) {
+            // Sembunyikan intro empty state, tunjukkan halaman dashboard utama
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('dashboardResults').classList.remove('hidden');
+
+            // Set Meta info hulu
+            document.getElementById('displayTitle').innerText = `Media Intelligence Report: ${brand}`;
+            document.getElementById('displaySource').innerText = source;
+            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
+
+            // 1. Render Sentimen
+            const sentimentVal = data.sentimentScore || 50;
+            const sentimentLbl = data.sentimentLabel || "Netral";
+            document.getElementById('sentimentValue').innerText = `${sentimentVal}%`;
+            document.getElementById('sentimentLabel').innerText = sentimentLbl;
+            document.getElementById('sentimentBar').style.width = `${sentimentVal}%`;
+
+            // Atur warna visual badge sentimen berdasarkan tingkat persentase
+            const sBar = document.getElementById('sentimentBar');
+            const sValText = document.getElementById('sentimentValue');
+            const sLblText = document.getElementById('sentimentLabel');
+            if (sentimentVal >= 70) {
+                sBar.className = "bg-emerald-500 h-full rounded-full transition-all";
+                sValText.className = "text-4xl font-extrabold text-emerald-400";
+                sLblText.className = "text-xs text-emerald-500/80 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md";
+            } else if (sentimentVal >= 45) {
+                sBar.className = "bg-amber-500 h-full rounded-full transition-all";
+                sValText.className = "text-4xl font-extrabold text-amber-400";
+                sLblText.className = "text-xs text-amber-500/80 font-bold bg-amber-500/10 px-2 py-0.5 rounded-md";
+            } else {
+                sBar.className = "bg-rose-500 h-full rounded-full transition-all";
+                sValText.className = "text-4xl font-extrabold text-rose-400";
+                sLblText.className = "text-xs text-rose-500/80 font-bold bg-rose-500/10 px-2 py-0.5 rounded-md";
+            }
+
+            // 2. Render Risk Level
+            const risk = (data.riskLevel || "LOW").toUpperCase();
+            const riskBadge = document.getElementById('riskBadge');
+            const riskDesc = document.getElementById('riskDesc');
+            const riskIcon = document.getElementById('riskIcon');
+            
+            riskDesc.innerText = data.riskDescription || "Situasi terpantau aman terkendali.";
+
+            if (risk === "HIGH") {
+                riskBadge.className = "inline-flex items-center gap-1.5 text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-full border border-rose-500/20";
+                riskIcon.className = "w-4 h-4 text-rose-400";
+                riskBadge.innerHTML = `<span class="w-2 h-2 bg-rose-500 rounded-full"></span> CRITICAL RISK`;
+            } else if (risk === "MEDIUM") {
+                riskBadge.className = "inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20";
+                riskIcon.className = "w-4 h-4 text-amber-400";
+                riskBadge.innerHTML = `<span class="w-2 h-2 bg-amber-500 rounded-full"></span> MEDIUM RISK`;
+            } else {
+                riskBadge.className = "inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20";
+                riskIcon.className = "w-4 h-4 text-emerald-400";
+                riskBadge.innerHTML = `<span class="w-2 h-2 bg-emerald-500 rounded-full"></span> LOW RISK`;
+            }
+
+            // 3. Render Key Takeaway & Executive Summary
+            document.getElementById('keyInsightText').innerText = data.keyInsight || "Insight kunci berhasil dirangkum.";
+            document.getElementById('executiveSummaryText').innerText = data.executiveSummary || "Ringkasan eksekutif siap dibaca.";
+
+            // 4. Render Opportunities & Concerns Lists
+            const listOpp = document.getElementById('listOpportunities');
+            const listCon = document.getElementById('listConcerns');
+            listOpp.innerHTML = "";
+            listCon.innerHTML = "";
+
+            (data.opportunities || []).forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                listOpp.appendChild(li);
+            });
+
+            (data.concerns || []).forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                listCon.appendChild(li);
+            });
+
+            // 5. Render Recommended Actions & Priority Badges
+            const listActions = document.getElementById('listActions');
+            listActions.innerHTML = "";
+            (data.recommendedActions || []).forEach(act => {
+                const pColor = act.priority.toUpperCase() === 'HIGH' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
+                               (act.priority.toUpperCase() === 'MEDIUM' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20');
+                
+                const card = document.createElement('div');
+                card.className = "p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-start justify-between gap-2";
+                card.innerHTML = `
+                    <div>
+                        <p class="text-xs font-semibold text-slate-200">${act.action}</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">${act.desc}</p>
+                    </div>
+                    <span class="text-[9px] font-bold ${pColor} border px-2 py-0.5 rounded">${act.priority}</span>
+                `;
+                listActions.appendChild(card);
+            });
+
+            //            // 6. Render Chart.js (Grafik Frekuensi Tema)
+            const ctx = document.getElementById('themeChart').getContext('2d');
+            if (themeChartInstance) {
+                themeChartInstance.destroy();
+            }
+
+            themeChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.themes || ["Rasa", "Distribusi", "Harga", "Klaim Kemasan"],
+                    datasets: [{
+                        label: 'Frekuensi Sebutan Topik',
+                        data: data.themeFrequencies || [15, 10, 8, 4],
+                        backgroundColor: 'rgba(99, 102, 241, 0.45)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // Amankan data teks mentah untuk fitur Copy Report ke Clipboard
+            finalAIReportText = `*** MEDIA PULSE INTELLIGENCE REPORT ***
+Brand: ${brand}
+Sentimen: ${sentimentVal}% (${sentimentLbl})
+Status Risiko: ${risk}
+
+KEY TAKEAWAY:
+"${data.keyInsight}"
+
+REKOMENDASI OPERASIONAL:
+${(data.recommendedActions || []).map((a, i) => `${i+1}. ${a.action} [${a.priority}] - ${a.desc}`).join("\n")}
+
+EXECUTIVE SUMMARY:
+${data.executiveSummary}`;
+
+            lucide.createIcons();
+        }
+
+        //        // Fungsi simulasi data lokal tanpa memerlukan API Key internet
+        function runSimulationLocal(brand, source) {
+            const mockData = {
+                sentimentScore: 78,
+                sentimentLabel: "Sangat Positif",
+                riskLevel: "LOW",
+                riskDescription: `Aktivitas pembicaraan seputar "${brand}" didominasi percakapan suportif. Risiko publisitas negatif terdeteksi sangat rendah.`,
+                keyInsight: "Produk dinilai sangat memuaskan di lidah konsumen, namun strategi ketersediaan logistik di ritel daerah mendesak segera ditingkatkan.",
+                themes: ["Kualitas Rasa", "Ketersediaan Stok", "Apresiasi Kemasan", "Rasio Harga-Nilai"],
+                themeFrequencies: [18, 12, 9, 5],
+                opportunities: [
+                    "Meluncurkan program bundling hemat khusus keluarga.",
+                    "Fokus penetrasi promo digital hyperlocal di kota Bandung."
+                ],
+                concerns: [
+                    "Kelangkaan produk di jaringan ritel minimarket lokal.",
+                    "Komplain kecil seputar kenaikan harga eceran."
+                ],
+                recommendedActions: [
+                    {action: "Restrukturisasi Logistik", desc: "Percepat pemenuhan pasokan ritel minimarket daerah teraktif.", priority: "HIGH"},
+                    {action: "Kampanye Hyperlocal", desc: "Buat promo lokal yang menargetkan wilayah paling responsif.", priority: "MEDIUM"},
+                    {action: "Diskon Bundling Lebaran", desc: "Rilis kemasan hemat untuk meningkatkan nilai belanja produk.", priority: "LOW"}
+                ],
+                executiveSummary: `Berdasarkan analisis persepsi digital terhadap brand "${brand}" melalui platform ${source}, disimpulkan bahwa brand memiliki citra yang sehat (Health Score: 78%). Minat beli dan tingkat kebanggaan memiliki produk ini sangat tinggi.
+
+Meskipun demikian, terdapat isu distribusi (bottleneck logistik) yang berpotensi menjadi ancaman jika tidak diatasi secepatnya. Disarankan dewan direksi segera mengalihkan fokus pengawasan rantai pasokan langsung di titik ritel teraktif.`
+            };
+
+            renderDashboard(mockData, brand, source);
+            toggleNotif(true, "Simulasi lokal berhasil dijalankan (Tanpa API Key)!");
+        }
+
+        // Fungsi Menyalin Laporan Hasil ke Clipboard Sistem
+        function copyToClipboard() {
+            if (!finalAIReportText) return;
+            
+            // Menggunakan metode yang aman untuk iFrame/browser
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = finalAIReportText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextArea);
+            
+            toggleNotif(true, "Laporan lengkap berhasil disalin ke clipboard!");
+        }
+    </script>
+</body>
+</html>
